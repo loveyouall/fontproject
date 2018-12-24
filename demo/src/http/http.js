@@ -43,10 +43,10 @@ export function fetch (url, params = {}) {
       params: params
     })
       .then(response => {
-        resolve(response.data)
+       return resolve(response.data)
       })
       .catch(err => {
-        reject(err)
+        return reject(err)
       })
   })
 }

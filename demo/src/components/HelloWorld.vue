@@ -8,7 +8,7 @@
     </el-aside>
     <el-container>
       <el-main>
-         <!-- <el-table
+         <el-table
           :data="tableData"
           border
           style="width: 100%">
@@ -73,14 +73,14 @@
             width="100">
             <template slot-scope="scope">
               <el-switch
-                v-model="tableData.value2"
+                v-model="scope.row.value2"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
-                @change="get()">
+                @change="get(scope.row)">
               </el-switch>
             </template>
           </el-table-column>
-        </el-table> -->
+        </el-table>
       </el-main>
     </el-container>
   </el-container>
@@ -89,7 +89,6 @@
 
 <script>
 import {fetch} from './../http/http'
-import axios from 'axios'
 
 // import {post, fetch, patch, put} from './../http/http'
 export default {
@@ -99,7 +98,7 @@ export default {
       startTime: '',
       endTime: '',
       value2: true,
-      tableData: '',
+      tableData: [],
       data: [{
         label: '一级 1',
         children: [{
@@ -143,8 +142,17 @@ export default {
     }
   },
   methods: {
-    get () {
-      console.log(1111)
+    async get (e) {
+      // 发送预约请求/取消预约请求
+      let answer = await fetch(`http://localhost:8080/${e.id}/test`)
+      if (answer.statusCode === 200) {
+        if (answer.status === 'false') {
+          e.value2 = !e.value2
+        }
+      }
+      
+      
+      // let res = true
     },
     handleNodeClick (e) {
       if (!e.children) {
@@ -156,18 +164,17 @@ export default {
       console.log(111)
     },
     async getthis () {
-      let tableData = await fetch('http://localhost:8080/#/')
-      for (let i in tableData) {
-        this.tableData = tableData[i]
-      }
-      console.log(tableData)
+      let tableData = await fetch('http://localhost:8080/')
       this.tableData = tableData
+      console.log('tableData', this.tableData)
       console.log(this.tableData)
     }
   },
   async mounted () {
-    console.log(axios.defaults)
     await this.getthis()
+  },
+  async updated () {
+    // await this.getthis()
   }
 }
 </script>
