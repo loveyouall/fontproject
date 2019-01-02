@@ -4,7 +4,7 @@
   </el-header>
   <el-container>
     <el-aside style="width: 200px;">
-      <!-- <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" icon-class="el-icon-document" highlight-current="true"></el-tree> -->
+      <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" icon-class="el-icon-document"></el-tree>
     </el-aside>
     <el-container>
       <el-main>
@@ -42,12 +42,12 @@
             width="160">
             <template slot-scope="scope">
               <el-time-select
-                v-model="startTime"
+                v-model="scope.row.startTime"
                 :picker-startTime="{
                   start: '08:30',
                   step: '00:15',
                   end: '18:30',
-                  minTime: tableData.startTime
+                  minTime: scope.row.startTime
                 }">
               </el-time-select>
             </template>
@@ -57,12 +57,12 @@
             width="150">
             <template slot-scope="scope">
             <el-time-select
-              v-model="endTime"
+              v-model="scope.row.endTime"
               :picker-options="{
                 start: '08:30',
                 step: '00:15',
                 end: '18:30',
-                minTime: tableData.startTime
+                minTime: scope.row.startTime
               }">
             </el-time-select>
             </template>
@@ -89,7 +89,7 @@
 
 <script>
 import {fetch} from './../http/http'
-
+import {setCookie} from '../config/index'
 // import {post, fetch, patch, put} from './../http/http'
 export default {
   name: 'HelloWorld',
@@ -99,44 +99,8 @@ export default {
       endTime: '',
       value2: true,
       tableData: [],
-      data: [{
-        label: '一级 1',
-        children: [{
-          label: '二级 1-1',
-          children: [{
-            label: '三级 1-1-1'
-          }]
-        }]
-      }, {
-        label: '一级 2',
-        children: [{
-          label: '二级 2-1',
-          children: [{
-            label: '三级 2-1-1'
-          }]
-        }, {
-          label: '二级 2-2',
-          children: [{
-            label: '三级 2-2-1'
-          }]
-        }]
-      }, {
-        label: '一级 3',
-        children: [{
-          label: '二级 3-1',
-          children: [{
-            label: '三级 3-1-1'
-          }]
-        }, {
-          label: '二级 3-2',
-          children: [{
-            label: '三级 3-2-1'
-          }]
-        }]
-      }],
+      data: [],
       defaultProps: {
-        children: 'children',
-        label: 'label'
       },
       activeName: 'Welcome to Your Vue.js App'
     }
@@ -150,28 +114,40 @@ export default {
           e.value2 = !e.value2
         }
       }
-      
-      
       // let res = true
+    },
+    async getSlider (e) {
+      // 获取默认左侧栏
+      let answer = await fetch('http://localhost:8080/list')
+      if (answer.statusCode === 200) {
+        console.log(answer)
+        this.data = answer.table
+        this.defaultProps = {
+          children: 'children',
+          label: 'label'
+        }
+      }
     },
     handleNodeClick (e) {
       if (!e.children) {
-        console.log(e.label)
-        console.log(1111)
+        // 获取特点的table
+        // let answer = await fetch('')
       }
     },
     handleClick () {
       console.log(111)
     },
-    async getthis () {
+    async getTable () {
       let tableData = await fetch('http://localhost:8080/')
       this.tableData = tableData
       console.log('tableData', this.tableData)
-      console.log(this.tableData)
     }
   },
   async mounted () {
-    await this.getthis()
+    let token = getcook
+    // if()
+    await this.getTable()
+    await this.getSlider()
   },
   async updated () {
     // await this.getthis()
