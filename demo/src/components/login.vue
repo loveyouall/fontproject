@@ -48,12 +48,11 @@ export default {
       console.log(this.password)
       // let data = 111
       let res = await post('http://localhost:8080/login', {username: this.username, password: this.password})
-      console.log(res)
       if (res.statusCode === 200) {
-        if (res.status === true) {
-          console.log(1111)
+        console.log(res)
+        if (res.status) {
           this.$router.push({path: '/main'})
-          this.setCookie('token', '111')
+          setCookie('status', res.status)
         }
       }
     }

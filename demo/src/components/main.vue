@@ -1,5 +1,5 @@
 <template>
-<el-container style="height: 1000px;">
+<el-container style="height: 1000px;" v-if="token === '2'">
   <el-header>
   </el-header>
   <el-container>
@@ -89,12 +89,13 @@
 
 <script>
 import {fetch} from './../http/http'
-import {setCookie} from '../config/index'
+import {getCookie} from '../config/index'
 // import {post, fetch, patch, put} from './../http/http'
 export default {
   name: 'HelloWorld',
   data () {
     return {
+      token: '',
       startTime: '',
       endTime: '',
       value2: true,
@@ -144,7 +145,8 @@ export default {
     }
   },
   async mounted () {
-    let token = getcook
+    this.token = getCookie(status)
+    console.log(this.token)
     // if()
     await this.getTable()
     await this.getSlider()
