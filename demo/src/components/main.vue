@@ -1,6 +1,9 @@
 <template>
-<el-container style="height: 1000px;" v-if="token === '2'">
+<div>
+  <el-container style="height: 1000px;" v-if="token === '2'">
   <el-header>
+     <i class="el-icon-error right" style="margin-top: 20px; margin-left: 10px;" @click="cancelLogin()"></i>
+    <i class="el-icon-error right" style="margin-top: 20px;">{{user}}</i>
   </el-header>
   <el-container>
     <el-aside style="width: 200px;">
@@ -85,16 +88,62 @@
     </el-container>
   </el-container>
 </el-container>
+<el-container style="height: 1000px;" v-if="token === '1'">
+  <el-header>
+    <i class="el-icon-error right" style="margin-top: 20px; margin-left: 10px;" @click="cancelLogin()"></i>
+    <i class="el-icon-error right" style="margin-top: 20px;">{{user}}</i>
+  </el-header>
+  <el-container>
+    <el-aside style="width: 200px;">
+      <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick" icon-class="el-icon-document"></el-tree>
+    </el-aside>
+    <el-container>
+      <el-main>
+         <el-table
+          :data="tableData"
+          border
+          style="width: 100%">
+          <el-table-column
+            prop="id"
+            label="学号"
+            width="280">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="姓名"
+            width="370">
+          </el-table-column>
+          <el-table-column
+            prop="count"
+            label="设备使用次数"
+            width="300">
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+              <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+            </template>
+    </el-table-column>
+
+        </el-table>
+      </el-main>
+    </el-container>
+  </el-container>
+</el-container>
+</div>
 </template>
 
 <script>
 import {fetch} from './../http/http'
-import {getCookie} from '../config/index'
+import {getCookie, delCookie} from '../config/index'
 // import {post, fetch, patch, put} from './../http/http'
 export default {
   name: 'HelloWorld',
   data () {
     return {
+      user: '',
       token: '',
       startTime: '',
       endTime: '',
@@ -107,6 +156,11 @@ export default {
     }
   },
   methods: {
+    cancelLogin () {
+      delCookie('token')
+      delCookie('user')
+      this.$router.push({path: '/'})
+    },
     async get (e) {
       // 发送预约请求/取消预约请求
       let answer = await fetch(`http://localhost:8080/${e.id}/test`)
@@ -121,7 +175,6 @@ export default {
       // 获取默认左侧栏
       let answer = await fetch('http://localhost:8080/list')
       if (answer.statusCode === 200) {
-        console.log(answer)
         this.data = answer.table
         this.defaultProps = {
           children: 'children',
@@ -139,16 +192,26 @@ export default {
       console.log(111)
     },
     async getTable () {
-      let tableData = await fetch('http://localhost:8080/')
+      let tableData = await fetch('http://localhost:8080/table')
       this.tableData = tableData
       console.log('tableData', this.tableData)
+    },
+    async getStudent () {
+      const token = getCookie('token')
+      let tableData = await fetch(`http://localhost:8080/${token}`)
+      this.tableData = tableData
     }
   },
   async mounted () {
-    this.token = getCookie(status)
+    this.user = getCookie('user')
+    this.token = getCookie('token')
     console.log(this.token)
-    // if()
-    await this.getTable()
+    console.log(this.user)
+    if (this.token === '1') {
+      await this.getStudent()
+    } else {
+      await this.getTable()
+    }
     await this.getSlider()
   },
   async updated () {
@@ -186,5 +249,8 @@ export default {
   }
   .el-container:nth-child(7) .el-aside {
     line-height: 320px;
+  }
+  .right{
+    float: right;
   }
 </style>

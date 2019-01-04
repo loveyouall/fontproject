@@ -52,7 +52,8 @@ export default {
         console.log(res)
         if (res.status) {
           this.$router.push({path: '/main'})
-          setCookie('status', res.status)
+          setCookie('token', res.status.token)
+          setCookie('user', res.status.name)
         }
       }
     }
