@@ -20,7 +20,7 @@
 
       <!-- <el-aside style="width: 2%; background: -webkit-linear-gradient(top, #00CCFF, #330099)"></el-aside>
       <el-aside style="width: 2%; background: -webkit-linear-gradient(top, #00DDFF, #330099)"></el-aside> -->
-      <el-main style="background: #cccccc; width: 100%; padding-top:100px;">
+      <el-main style="background: #cccccc; width: 100%; padding-top:100px;padding-left: 200px;padding-right: 200px;">
         <el-container style="width: 90%; margin: 20px; ">
           <div style="width: 100px; margin-top: 8px;">用户名</div>
           <el-input
@@ -37,6 +37,10 @@
           placeholder="请输入密码"
           clearable>
         </el-input>
+        </el-container>
+         <el-radio v-model="select" label="1">老师/学生</el-radio>
+        <el-radio v-model="select" label="2">管理员</el-radio>
+        <el-container style="margin: 20px;">
         </el-container>
           <el-button type="primary" round @click="login()">登录</el-button>
           <el-button round @click="reset()">重置</el-button>
@@ -64,7 +68,8 @@ export default {
   data () {
     return {
       username: '',
-      password: ''
+      password: '',
+      select: ''
     }
   },
   methods: {
@@ -76,11 +81,14 @@ export default {
       console.log(this.username)
       console.log(this.password)
       // let data = 111
-      let res = await post('http://localhost:8080/login', {username: this.username, password: this.password})
+      let res = await post('http://localhost:8080/login', {username: this.username, password: this.password, select: this.select})
       if (res.statusCode === 200) {
-        console.log(res)
         if (res.status) {
-          this.$router.push({path: '/main'})
+          if (res.status.token === '3' || res.status.token === '2') {
+            this.$router.push({path: '/main'})
+          } else if (res.status.token === '1') {
+            this.$router.push({path: '/manager'})
+          }
           setCookie('token', res.status.token)
           setCookie('user', res.status.name)
         }
