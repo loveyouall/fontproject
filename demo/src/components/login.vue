@@ -81,6 +81,7 @@ export default {
       console.log(this.username)
       console.log(this.password)
       // let data = 111
+      console.log(this.select)
       let res = await post('http://localhost:8080/login', {username: this.username, password: this.password, select: this.select})
       if (res.statusCode === 200) {
         if (res.status) {
