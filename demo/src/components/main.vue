@@ -173,7 +173,7 @@ export default {
     },
     async getSlider (e) {
       // 获取默认左侧栏
-      let answer = await fetch('http://localhost:8080/list')
+      let answer = await fetch('http://localhost:8080/classroom')
       if (answer.statusCode === 200) {
         this.data = answer.table
         this.defaultProps = {

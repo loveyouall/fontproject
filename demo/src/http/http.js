@@ -61,36 +61,36 @@ export function fetch (url, params = {}) {
   })
 }
 export function post (url, data) {
-    return new Promise((resolve, reject) => {
-      // var params = new URLSearchParams()
-      // params.append('jdmc', 'hello jdmc你好')
-      // params.append('jddm', '2')
-      // data = camelToUnderLine(data)
-      // let data = qs.stringify(data)
-      // console.log(data)
-      // console.log(qs.stringify())
-      axios.post(url, {username: data.username, password: data.password, select: data.select}, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        transformRequest: [function (data) {
-          console.log(data)
-          data = qs.stringify({
-            username: JSON.stringify(data.username),
-            password: JSON.stringify(data.password),
-            select: JSON.stringify(data.select)
-          })
-          console.log(data.username)
-          console.log(data)
-          return data
-        }]
-      })
-        .then(response => {
-          resolve(response.data)
-        }, err => {
-          reject(err)
+  return new Promise((resolve, reject) => {
+    // var params = new URLSearchParams()
+    // params.append('jdmc', 'hello jdmc你好')
+    // params.append('jddm', '2')
+    // data = camelToUnderLine(data)
+    // let data = qs.stringify(data)
+    // console.log(data)
+    // console.log(qs.stringify())
+    axios.post(url, {username: data.username, password: data.password, select: data.select}, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+      transformRequest: [function (data) {
+        console.log(data)
+        data = qs.stringify({
+          username: JSON.stringify(data.username),
+          password: JSON.stringify(data.password),
+          select: JSON.stringify(data.select)
         })
+        console.log(data.username)
+        console.log(data)
+        return data
+      }]
     })
+      .then(response => {
+        resolve(response.data)
+      }, err => {
+        reject(err)
+      })
+  })
 }
 
 export function patch (url, data = {}) {
