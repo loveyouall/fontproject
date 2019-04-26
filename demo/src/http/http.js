@@ -8,25 +8,9 @@ axios.defaults.baseURL = process.env.API_ROOT
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8'
 axios.interceptors.request.use(
   config => {
-    if (config.method === 'post') {
-      // console.log(config.data)
-    }
-    // const token = getCookie('名称');注意使用的时候需要引入cookie方法，推荐js-cookie
-    // config.data = JSON.stringify(config.data)
     config.headers = {
       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      // 'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild'
     }
-    // config.headers = {
-    //   'Access-Control-Allow-Credentials': true,
-    //   'Access-Control-Allow-Headers': 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild',
-    //   'Access-Control-Allow-Methods': 'PUT, POST, GET, DELETE, OPTIONS',
-    //   'Access-Control-Allow-Origin': 'http://localhost:8080'
-    // }
-    // if(token){
-    //   config.params = {'token':token}
-    // }
-    // console.log(config)
     return config
   },
   error => {

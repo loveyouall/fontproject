@@ -16,10 +16,6 @@
       <el-aside style="width: 30px; background: -webkit-linear-gradient(top, #00BBFF, #330099)"></el-aside>
       <el-aside style="width: 30px; background: -webkit-linear-gradient(top, #00AAFF, #330099)"></el-aside>
       <el-aside style="width: 30px; background: -webkit-linear-gradient(top, #0099FF, #330099)"></el-aside>
-      <!-- <el-aside style="width: 97px; background: #00FFFF">操作提示</el-aside> -->
-
-      <!-- <el-aside style="width: 2%; background: -webkit-linear-gradient(top, #00CCFF, #330099)"></el-aside>
-      <el-aside style="width: 2%; background: -webkit-linear-gradient(top, #00DDFF, #330099)"></el-aside> -->
       <el-main style="background: #cccccc; width: 100%; padding-top:100px;padding-left: 200px;padding-right: 200px;">
         <el-container style="width: 90%; margin: 20px; ">
           <div style="width: 100px; margin-top: 8px;">用户名</div>
@@ -38,8 +34,6 @@
           clearable>
         </el-input>
         </el-container>
-         <el-radio v-model="select" label="1">老师/学生</el-radio>
-        <el-radio v-model="select" label="2">管理员</el-radio>
         <el-container style="margin: 20px;">
         </el-container>
           <el-button type="primary" round @click="login()">登录</el-button>
@@ -62,7 +56,7 @@
   </el-container>
 </template>
 <script>
-import {post} from './../http/http'
+import {fetch} from './../http/http'
 import {setCookie} from '../config/index'
 export default {
   data () {
@@ -74,34 +68,29 @@ export default {
   },
   methods: {
     reset () {
-      this.username = ''
-      this.password = ''
+      // this.username = ''
+      // this.password = ''
     },
     async login () {
-      console.log(this.username)
-      console.log(this.password)
-      // let data = 111
-      console.log(this.select)
-      let res = await post('http://localhost:8080/login', {username: this.username, password: this.password, select: this.select})
-      if (res.statusCode === 200) {
-        if (res.status) {
-          if (res.status.token === '3' || res.status.token === '2') {
-            this.$router.push({path: '/main'})
-          } else if (res.status.token === '1') {
-            this.$router.push({path: '/manager'})
-          }
-          setCookie('token', res.status.token)
-          setCookie('user', res.status.name)
-        }
-      } else if (res.statusCode === 400) {
-        console.log(res)
-        this.$message({
-          dangerouslyUseHTMLString: true,
-          type: 'warning',
-          message: `<strong>${res.status}</strong>`,
-          center: true
-        })
-      }
+      // let res = await fetch('http://localhost:8080/login', {id: this.username, password: this.password, select: this.select})
+      // console.log(res)
+      // if (res) {
+      //   // 3 学生 2 老师 1 管理员
+      //   if (res[0].type === 3 || res[0].type === 2) {
+      //     this.$router.push({path: '/main'})
+      //   } else if (res[0].type === 1) {
+      //     this.$router.push({path: '/manager'})
+      //   }
+      //   setCookie('token', res[0].type)
+      //   setCookie('user', res[0].name)
+      // } else if (res.statusCode === 400) {
+      //   this.$message({
+      //     dangerouslyUseHTMLString: true,
+      //     type: 'warning',
+      //     message: `<strong>${res.status}</strong>`,
+      //     center: true
+      //   })
+      // }
     }
   }
 }

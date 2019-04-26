@@ -1,18 +1,5 @@
 <template>
-  <el-container style="height: 1000px;">
-    <el-header>111
-      <i class="el-icon-error right" style="margin-top: 20px; margin-left: 10px;" @click="cancelLogin()"></i>
-      <i class="el-icon-error right" style="margin-top: 20px;">{{user}}</i>
-    </el-header>
-    <el-container>
-        <el-aside style="width: 200px;">222
-        </el-aside>
-        <el-container>
-        <el-main>3333
-        </el-main>
-        </el-container>
-    </el-container>
-  </el-container>
+  <div></div>
 </template>
 
 <script>
@@ -23,28 +10,28 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      user: '',
-      token: '',
-      startTime: '',
-      endTime: '',
-      value2: true,
-      tableData: [],
-      data: [],
-      defaultProps: {
-      },
-      activeName: 'Welcome to Your Vue.js App'
+      // user: '',
+      // token: '',
+      // startTime: '',
+      // endTime: '',
+      // value2: true,
+      // tableData: [],
+      // data: [],
+      // defaultProps: {
+      // },
+      // activeName: 'Welcome to Your Vue.js App'
     }
   },
   methods: {
-    cancelLogin () {
-      delCookie('token')
-      delCookie('user')
-      this.$router.push({path: '/'})
-    }
+    // cancelLogin () {
+    //   delCookie('token')
+    //   delCookie('user')
+    //   this.$router.push({path: '/'})
+    // }
   },
   async mounted () {
-    this.user = getCookie('user')
-    this.token = getCookie('token')
+    // this.user = getCookie('user')
+    // this.token = getCookie('token')
     // if (this.token === '1') {
     //   await this.getStudent()
     // } else {
