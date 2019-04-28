@@ -16,7 +16,8 @@
       <el-aside style="width: 30px; background: -webkit-linear-gradient(top, #00BBFF, #330099)"></el-aside>
       <el-aside style="width: 30px; background: -webkit-linear-gradient(top, #00AAFF, #330099)"></el-aside>
       <el-aside style="width: 30px; background: -webkit-linear-gradient(top, #0099FF, #330099)"></el-aside>
-      <el-main style="background: #cccccc; width: 100%; padding-top:100px;padding-left: 200px;padding-right: 200px;">
+      <el-main style="background: #cccccc; width: 100%; padding: auto;">
+        <div class='title'>设备管理系统</div>
         <el-container style="width: 90%; margin: 20px; ">
           <div style="width: 100px; margin-top: 8px;">用户名</div>
           <el-input
@@ -56,7 +57,8 @@
   </el-container>
 </template>
 <script>
-import {fetch} from './../http/http'
+// import { Message } from 'element-ui'
+import { fetch } from './../http/http'
 import {setCookie} from '../config/index'
 export default {
   data () {
@@ -68,36 +70,57 @@ export default {
   },
   methods: {
     reset () {
-      // this.username = ''
-      // this.password = ''
+      this.username = ''
+      this.password = ''
     },
+    // 登陆
     async login () {
-      // let res = await fetch('http://localhost:8080/login', {id: this.username, password: this.password, select: this.select})
-      // console.log(res)
-      // if (res) {
-      //   // 3 学生 2 老师 1 管理员
-      //   if (res[0].type === 3 || res[0].type === 2) {
-      //     this.$router.push({path: '/main'})
-      //   } else if (res[0].type === 1) {
-      //     this.$router.push({path: '/manager'})
-      //   }
-      //   setCookie('token', res[0].type)
-      //   setCookie('user', res[0].name)
-      // } else if (res.statusCode === 400) {
-      //   this.$message({
-      //     dangerouslyUseHTMLString: true,
-      //     type: 'warning',
-      //     message: `<strong>${res.status}</strong>`,
-      //     center: true
-      //   })
-      // }
+      try {
+        let res
+        if (this.username && this.password) {
+          res = await fetch('http://localhost:8080/login', {username: this.username, password: this.password})
+          // console.log(res)
+          let data = res.data[0]
+          console.log(data)
+          if (res.code === 200) {
+            console.log(data.permission)
+            // 根据权限进入不同的页面
+            // 0 一级管理员页面 1 二级管理员页面
+            if (data.permission === 0) {
+              console.log('一级管理员')
+              setCookie('user', data)
+              this.$router.push({path: '/main'})
+            } else if (data.permission === 1) {
+              setCookie('user', data)
+              console.log(888)
+            } else {
+              this.$message({
+                message: '用户信息错误',
+                type: 'error'
+              })
+            }
+          }
+        } else {
+          // 没有输入用户名或者密码
+          this.$message({
+            message: '请重新输入用户名和密码',
+            type: 'error'
+          })
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
 </script>
-<style>
+<style scoped>
   *{
     padding: 0;
     margin: 0;
+  }
+  .title {
+    font-size: 60px;
+    margin-bottom: 100px;
   }
 </style>

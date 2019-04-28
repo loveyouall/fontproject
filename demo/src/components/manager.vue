@@ -4,7 +4,7 @@
 
 <script>
 // import {fetch} from './../http/http'
-import {getCookie, delCookie} from '../config/index'
+// import {getCookie, delCookie} from '../config/index'
 // import {post, fetch, patch, put} from './../http/http'
 export default {
   name: 'HelloWorld',
