@@ -55,7 +55,42 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">权限升级</el-button>
+            <el-button @click="handleUpdataClick(scope.row)" type="text" size="small">权限升级</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-form ref="form" :model="subject" label-width="200px" v-if='mainStatus === 3'>
+        <el-form-item label="分类名称">
+          <el-input v-model="subject.name" maxlength=10></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubjectSubmit">立即创建</el-button>
+          <el-button>取消</el-button>
+        </el-form-item>
+      </el-form>
+       <el-table
+        :data="SubjectData"
+        style="width: 100%"
+        v-if='mainStatus === 4'>
+        <el-table-column
+          prop="id"
+          label="编号"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="设备分类名称">
+        </el-table-column>
+         <el-table-column
+          prop="orderBy"
+          label="创建者">
+        </el-table-column>
+         <el-table-column
+          fixed="right"
+          label="操作"
+          width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleDeteleClick(scope.row)" type="text" size="small">删除分类</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -67,7 +102,7 @@
 <script>
 // 一级管理员页面
 import {fetch} from './../http/http'
-// import {getCookie, delCookie} from '../config/index'
+import {getCookie} from '../config/index'
 export default {
   data () {
     return {
@@ -94,23 +129,14 @@ export default {
       activeIndex: '1',
       form: {
       },
-      ManagerData: []
-      // user: '',
-      // token: '',
-      // startTime: '',
-      // endTime: '',
-      // value2: true,
-      // tableData: [],
-      // data: [],
-      // defaultProps: {
-      // },
-      // activeName: 'Welcome to Your Vue.js App'
+      subject: {},
+      ManagerData: [],
+      SubjectData: []
     }
   },
   methods: {
     // 权限升级
-    handleClick (e) {
-      console.log(e)
+    handleUpdataClick (e) {
       this.$alert('确认为该用户权限升级，该操作不可逆', '操作提示', {
         confirmButtonText: '确定',
         callback: action => {
@@ -118,6 +144,17 @@ export default {
         }
       })
     },
+
+    // 删除分类
+    handleDeteleClick (e) {
+      this.$alert('确认是否删除该分类，该操作不可逆', '操作提示', {
+        confirmButtonText: '确定',
+        callback: action => {
+          this.deleteSubjectInfo(action, e)
+        }
+      })
+    },
+    // 权限升级
     async upDataManagerInfo (action, e) {
       if (action === 'confirm') {
         let res = await fetch('http://localhost:8080/upDataManagerInfo', {username: JSON.stringify(e.username)})
@@ -137,6 +174,26 @@ export default {
         }
       }
     },
+    // 删除分类
+    async deleteSubjectInfo (action, e) {
+      if (action === 'confirm') {
+        let res = await fetch('http://localhost:8080/deleteSubjectInfo', {id: e.id})
+        if (res.code === 200 && res.data) {
+          if (res.data.affectedRows && res.data.affectedRows === 1) {
+            this.$message({
+              message: '更新成功',
+              type: 'success'
+            })
+            this.getSubject()
+          } else {
+            this.$message({
+              message: '更新失败',
+              type: 'error'
+            })
+          }
+        }
+      }
+    },
     // 选择侧边栏
     handleNodeClick (e) {
       this.mainStatus = e.id
@@ -147,6 +204,8 @@ export default {
         })
       } else if (e.id === 2) {
         this.getManager()
+      } else if (e.id === 4) {
+        this.getSubject()
       }
       console.log(e.id)
     },
@@ -156,6 +215,14 @@ export default {
       console.log(res.data)
       if (res.code === 200) {
         this.ManagerData = res.data
+      }
+    },
+    // 获取类别信息
+    async getSubject () {
+      let res = await fetch('http://localhost:8080/getSubject')
+      console.log(res.data)
+      if (res.code === 200) {
+        this.SubjectData = res.data
       }
     },
     // 选择顶部栏
@@ -169,10 +236,56 @@ export default {
     },
     // 创建管理员
     onManagerSubmit () {
-      this.format(this.form)
+      this.formatManager(this.form)
     },
-    // 验证参数是否存在
-    async format (target) {
+    // 创建分类
+    onSubjectSubmit () {
+      this.formatSubject(this.subject)
+    },
+    // 验证分类参数是否存在
+    async formatSubject (target) {
+      let count = 0
+      let name
+      let res = JSON.parse(getCookie('user'))
+      console.log(res)
+      if (res && res.name) {
+        name = res.name
+        count++
+      } else {
+        this.$message({
+          message: '请重新登录',
+          type: 'error'
+        })
+      }
+      if (target.name) {
+        count++
+      } else {
+        this.$message({
+          message: '请输入分类名称'
+        })
+      }
+      if (count === 2) {
+        let res = await fetch('http://localhost:8080/createSubject', {form: {
+          name: target.name,
+          orderBy: name
+        }})
+        if (res.code === 200 && res.data) {
+          if (res.data.affectedRows && res.data.affectedRows === 1) {
+            this.$message({
+              message: '创建成功',
+              type: 'success'
+            })
+          } else {
+            this.$message({
+              message: '创建失败, 数据库中已存在',
+              type: 'error'
+            })
+          }
+        }
+      }
+    },
+    // 验证管理员参数是否存在
+    async formatManager (target) {
       let count = 0
       if (target) {
         if (target.name) {
@@ -248,32 +361,7 @@ export default {
         }
       }
     }
-    // cancelLogin () {
-    //   delCookie('token')
-    //   delCookie('user')
-    //   this.$router.push({path: '/'})
-    // },
-    // async getSlider () {
-    //   let data
-    //   console.log(this.token)
-    //   if (this.token === '3') {
-    //     data = await fetch('http://localhost:8080/classroom')
-    //   }
-    //   console.log(data.table)
-    //   let {table} = data
-    //   this.data = table
-    // },
-    // async handleNodeClick (e) {
-    //   //  console.log(e.label)
-    //   if (e) {
-    //     console.log(e.label)
-    //     // 获取特点的table
-    //     if (this.token === '3') {
-    //       let res = await fetch('http://localhost:8080/classroomDetail', {'no': e.label})
-    //       console.log(res)
-    //     }
-    //   }
-    // }
+
   },
   async mounted () {
     this.treeData = this.userData

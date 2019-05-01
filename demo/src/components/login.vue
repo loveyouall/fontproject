@@ -88,11 +88,19 @@ export default {
             // 0 一级管理员页面 1 二级管理员页面
             if (data.permission === 0) {
               console.log('一级管理员')
-              setCookie('user', data)
+              setCookie('user', JSON.stringify(data))
+              this.$message({
+                message: '用户登录成功',
+                type: 'success'
+              })
               this.$router.push({path: '/main'})
             } else if (data.permission === 1) {
-              setCookie('user', data)
-              console.log(888)
+              setCookie('user', JSON.stringify(data))
+              this.$message({
+                message: '用户登录成功',
+                type: 'success'
+              })
+              this.$router.push({path: '/manager'})
             } else {
               this.$message({
                 message: '用户信息错误',
