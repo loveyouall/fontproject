@@ -93,8 +93,7 @@
             label="设备借出数量">
           </el-table-column>
           <el-table-column
-            label="操作的设备数量">
-            
+          label="操作的设备数量">            
             <template slot-scope="scope">
               <el-input
                 v-model="scope.row.factNum"
@@ -161,7 +160,7 @@ export default {
       })
     },
     handleBackClick (el) {
-     this.$alert('确认回收了该设备，该操作不可逆', '操作提示', {
+      this.$alert('确认回收了该设备，该操作不可逆', '操作提示', {
         confirmButtonText: '确定',
         callback: action => {
           console.log(el.id)
@@ -169,7 +168,7 @@ export default {
         }
       })
     },
-    async operateEquipment(action, el, type) {
+    async operateEquipment (action, el, type) {
       let name
       let res = JSON.parse(getCookie('user'))
       if (res && res.name) {
@@ -300,22 +299,18 @@ export default {
     // }
   },
   async mounted () {
+    let self = this
     let res = await fetch('http://localhost:8080/getSubject')
     console.log(res)
     if (res.code === 200 && res.data) {
       this.option = res.data
     }
-    // this.user = getCookie('user')
-    // this.token = getCookie('token')
-    // if (this.token === '1') {
-    //   await this.getStudent()
-    // } else {
-    //   await this.getTable()
-    // }
-    // await this.getSlider()
-  },
-  async updated () {
-    // await this.getthis()
+    let timer = setInterval(() => {
+      if (!getCookie('user')) {
+        self.$router.pop()
+        clearInterval(timer)
+      }
+    }, 2000)
   }
 }
 </script>

@@ -68,7 +68,7 @@
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
-       <el-table
+      <el-table
         :data="SubjectData"
         style="width: 100%"
         v-if='mainStatus === 4'>
@@ -92,6 +92,36 @@
           <template slot-scope="scope">
             <el-button @click="handleDeteleClick(scope.row)" type="text" size="small">删除分类</el-button>
           </template>
+        </el-table-column>
+      </el-table>
+      <el-table
+        :data="RecordData"
+        style="width: 100%"
+        v-if='mainStatus === 5'>
+        <el-table-column
+          prop="id"
+          label="编号"
+          width="180">
+        </el-table-column>
+        <el-table-column
+          prop="equipmentName"
+          label="设备分类名称">
+        </el-table-column>
+         <el-table-column
+          prop="orderBy"
+          label="操作者">
+        </el-table-column>
+         <el-table-column
+          prop="borrowNum"
+          label="借出">
+        </el-table-column>
+         <el-table-column
+          prop="backNum"
+          label="回收">
+        </el-table-column>
+        <el-table-column
+          prop="time"
+          label="时间">
         </el-table-column>
       </el-table>
     </el-main>
@@ -131,7 +161,8 @@ export default {
       },
       subject: {},
       ManagerData: [],
-      SubjectData: []
+      SubjectData: [],
+      RecordData: []
     }
   },
   methods: {
@@ -206,8 +237,17 @@ export default {
         this.getManager()
       } else if (e.id === 4) {
         this.getSubject()
+      } else if (e.id === 5) {
+        this.getRecord()
       }
       console.log(e.id)
+    },
+    // 获取记录列表
+    async getRecord () {
+      let res = await fetch('http://localhost:8080/getRecord')
+      if (res.code === 200) {
+        this.RecordData = res.data
+      }
     },
     // 获取非一级管理员信息
     async getManager () {
@@ -364,22 +404,16 @@ export default {
 
   },
   async mounted () {
+    let self = this
     this.treeData = this.userData
-    // this.user = getCookie('user')
-    // this.token = getCookie('token')
-    // console.log(this.token, 'token')
-    // // 老师
-    // if (this.token === 2) {
-    //   // await this.getStudent()
-    //   // await this.getSlider(this.token)
-    //   // 学生
-    // } else if (this.token === 3) {
-    //   console.log(444)
-    //   // await this.getTable()
-    // }
-    // if (this.token) {
-    //   await this.getSlider()
-    // }
+    let timer = setInterval(() => {
+      if (!getCookie('user')) {
+        self.$router.push({
+          path: '/'
+        })
+        clearInterval(timer)
+      }
+    }, 2000)
   }
 }
 </script>
